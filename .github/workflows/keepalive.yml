@@ -1,0 +1,13 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 12 */5 * *'  # Every 5 days at noon UTC
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: psql "$(echo "${{ secrets.DATABASE_URL }}" | sed 's/[?&]pgbouncer=true//')" -c "SELECT 1"
