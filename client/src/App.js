@@ -60,22 +60,24 @@ function App() {
               {tab}
             </button>
           ))}
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <button onClick={() => setShowExportMenu(v => !v)}>Export</button>
-            {showExportMenu && availableYears.length > 0 && (
-              <div style={{ position: 'absolute', top: '100%', right: 0, background: '#fff', border: '1px solid #ddd', borderRadius: 6, zIndex: 100, minWidth: 80, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+          <button onClick={() => setShowExportMenu(true)}>Export</button>
+          {showExportMenu && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              onClick={() => setShowExportMenu(false)}>
+              <div style={{ background: '#fff', borderRadius: 10, padding: '24px 32px', minWidth: 220, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}
+                onClick={e => e.stopPropagation()}>
+                <h3 style={{ margin: '0 0 16px', fontSize: 16, color: '#111' }}>Export Year</h3>
                 {availableYears.map(y => (
-                  <div key={y}
-                    style={{ padding: '8px 16px', cursor: 'pointer', fontSize: 14 }}
-                    onMouseEnter={e => e.target.style.background='#f5f5f5'}
-                    onMouseLeave={e => e.target.style.background='transparent'}
+                  <button key={y} style={{ display: 'block', width: '100%', marginBottom: 8, fontSize: 15 }}
                     onClick={() => { exportToExcel(y); setShowExportMenu(false); }}>
                     {y}
-                  </div>
+                  </button>
                 ))}
+                <button style={{ display: 'block', width: '100%', marginTop: 4, fontSize: 14, background: 'none', color: '#999', border: '1px solid #ddd' }}
+                  onClick={() => setShowExportMenu(false)}>Cancel</button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </nav>
       </header>
       <main>
