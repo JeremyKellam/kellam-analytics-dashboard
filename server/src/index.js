@@ -25,6 +25,17 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/api/years', async (req, res) => {
+  const result = await db.query(`
+    SELECT DISTINCT year FROM (
+      SELECT EXTRACT(YEAR FROM invoice_date)::int AS year FROM invoices
+      UNION SELECT year FROM expenses
+      UNION SELECT EXTRACT(YEAR FROM trip_date)::int AS year FROM trips
+    ) y ORDER BY year DESC
+  `);
+  res.json(result.rows.map(r => r.year));
+});
+
 app.use('/api/invoices', require('./routes/invoices'));
 app.use('/api/expenses', require('./routes/expenses'));
 app.use('/api/trips', require('./routes/trips'));

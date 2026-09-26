@@ -6,13 +6,20 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 
 const fmt = (n) => parseFloat(n || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-export default function SummaryTab() {
-  const [year, setYear] = useState(new Date().getFullYear());
+export default function SummaryTab({ availableYears = [] }) {
+  const now = new Date();
+  const [year, setYear] = useState(now.getFullYear());
   const [data, setData] = useState({ income: [], expenses: [] });
 
   useEffect(() => {
     getMonthlySummary({ year }).then((r) => setData(r.data));
   }, [year]);
+
+  useEffect(() => {
+    if (availableYears.length > 0 && !availableYears.includes(year)) {
+      setYear(availableYears[0]);
+    }
+  }, [availableYears]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build chart data: one row per month
   const chartData = Array.from({ length: 12 }, (_, i) => {
@@ -34,15 +41,14 @@ export default function SummaryTab() {
   const netProfit = totalIncome - totalExpenses;
   const activeMonths = chartData.filter((r) => r.Income > 0 || r.Expenses > 0).length || 1;
 
-  const years = [];
-  for (let y = new Date().getFullYear(); y >= 2020; y--) years.push(y);
-
   return (
     <div>
       <div className="year-selector">
         <label>Year</label>
         <select value={year} onChange={(e) => setYear(parseInt(e.target.value))}>
-          {years.map((y) => <option key={y} value={y}>{y}</option>)}
+          {(availableYears.length > 0 ? availableYears : [now.getFullYear()]).map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
         </select>
       </div>
 

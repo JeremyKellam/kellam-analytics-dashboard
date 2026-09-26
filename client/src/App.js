@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import IncomeTab from './components/IncomeTab';
 import ExpensesTab from './components/ExpensesTab';
 import TripsTab from './components/TripsTab';
 import SummaryTab from './components/SummaryTab';
-import { exportToExcel } from './api';
+import { exportToExcel, getYears } from './api';
 import './App.css';
 
 const TABS = ['Summary', 'Income', 'Expenses', 'Trips'];
@@ -13,6 +13,14 @@ function App() {
   const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
   const [keyInput, setKeyInput] = useState('');
   const [authError, setAuthError] = useState(false);
+  const [availableYears, setAvailableYears] = useState([]);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+
+  useEffect(() => {
+    if (apiKey) {
+      getYears().then((r) => setAvailableYears(r.data)).catch(() => {});
+    }
+  }, [apiKey]);
 
   if (!apiKey) {
     return (
@@ -52,19 +60,29 @@ function App() {
               {tab}
             </button>
           ))}
-          <button onClick={() => {
-            const year = prompt('Export year:', new Date().getFullYear());
-            if (year) exportToExcel(parseInt(year));
-          }}>
-            Export
-          </button>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button onClick={() => setShowExportMenu(v => !v)}>Export</button>
+            {showExportMenu && availableYears.length > 0 && (
+              <div style={{ position: 'absolute', top: '100%', right: 0, background: '#fff', border: '1px solid #ddd', borderRadius: 6, zIndex: 100, minWidth: 80, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                {availableYears.map(y => (
+                  <div key={y}
+                    style={{ padding: '8px 16px', cursor: 'pointer', fontSize: 14 }}
+                    onMouseEnter={e => e.target.style.background='#f5f5f5'}
+                    onMouseLeave={e => e.target.style.background='transparent'}
+                    onClick={() => { exportToExcel(y); setShowExportMenu(false); }}>
+                    {y}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </nav>
       </header>
       <main>
-        {activeTab === 'Summary' && <SummaryTab />}
-        {activeTab === 'Income' && <IncomeTab />}
-        {activeTab === 'Expenses' && <ExpensesTab />}
-        {activeTab === 'Trips' && <TripsTab />}
+        {activeTab === 'Summary' && <SummaryTab availableYears={availableYears} />}
+        {activeTab === 'Income' && <IncomeTab availableYears={availableYears} />}
+        {activeTab === 'Expenses' && <ExpensesTab availableYears={availableYears} />}
+        {activeTab === 'Trips' && <TripsTab availableYears={availableYears} />}
       </main>
     </div>
   );

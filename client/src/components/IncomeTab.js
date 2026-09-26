@@ -3,7 +3,7 @@ import { getInvoices, createInvoice, updateInvoice, toggleInvoicePaid, deleteInv
 
 const fmt = (n) => `$${parseFloat(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
-export default function IncomeTab() {
+export default function IncomeTab({ availableYears = [] }) {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [invoices, setInvoices] = useState([]);
@@ -16,6 +16,12 @@ export default function IncomeTab() {
   const load = () => getInvoices({ year }).then((r) => setInvoices(r.data));
 
   useEffect(() => { load(); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (availableYears.length > 0 && !availableYears.includes(year)) {
+      setYear(availableYears[0]);
+    }
+  }, [availableYears]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleUploadInvoice = async (e) => {
     const file = e.target.files[0];
@@ -78,9 +84,6 @@ export default function IncomeTab() {
     window.open(res.data.url, '_blank');
   };
 
-  const years = [];
-  for (let y = now.getFullYear(); y >= 2020; y--) years.push(y);
-
   const totalIncome = invoices.reduce((s, inv) => s + parseFloat(inv.amount || 0), 0);
   const totalPaid = invoices.filter(i => i.paid).reduce((s, inv) => s + parseFloat(inv.amount || 0), 0);
 
@@ -89,7 +92,9 @@ export default function IncomeTab() {
       <div className="year-selector">
         <label>Year</label>
         <select value={year} onChange={(e) => setYear(parseInt(e.target.value))}>
-          {years.map((y) => <option key={y} value={y}>{y}</option>)}
+          {(availableYears.length > 0 ? availableYears : [now.getFullYear()]).map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
         </select>
       </div>
 

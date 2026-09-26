@@ -5,7 +5,7 @@ const IRS_RATE = 0.70; // 2024 IRS mileage rate
 
 const fmt = (n) => `$${parseFloat(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
-export default function TripsTab() {
+export default function TripsTab({ availableYears = [] }) {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [trips, setTrips] = useState([]);
@@ -19,6 +19,12 @@ export default function TripsTab() {
   };
 
   useEffect(() => { load(); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (availableYears.length > 0 && !availableYears.includes(year)) {
+      setYear(availableYears[0]);
+    }
+  }, [availableYears]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,15 +50,14 @@ export default function TripsTab() {
   const totalMiles = parseFloat(yearSummary?.total_miles || 0);
   const deduction = totalMiles * IRS_RATE;
 
-  const years = [];
-  for (let y = now.getFullYear(); y >= 2020; y--) years.push(y);
-
   return (
     <div>
       <div className="year-selector">
         <label>Year</label>
         <select value={year} onChange={(e) => setYear(parseInt(e.target.value))}>
-          {years.map((y) => <option key={y} value={y}>{y}</option>)}
+          {(availableYears.length > 0 ? availableYears : [now.getFullYear()]).map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
         </select>
       </div>
 

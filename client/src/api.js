@@ -63,6 +63,8 @@ export const deleteTrip = (id) => API.delete(`/trips/${id}`);
 // Summary
 export const getMonthlySummary = (params) => API.get('/summary/monthly', { params });
 
+export const getYears = () => API.get('/years');
+
 // Export
 export const exportToExcel = async (year) => {
   const params = year ? { year } : {};
