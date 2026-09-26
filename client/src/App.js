@@ -52,8 +52,11 @@ function App() {
               {tab}
             </button>
           ))}
-          <button onClick={() => exportToExcel(new Date().getFullYear())}>
-            Export {new Date().getFullYear()}
+          <button onClick={() => {
+            const year = prompt('Export year:', new Date().getFullYear());
+            if (year) exportToExcel(parseInt(year));
+          }}>
+            Export
           </button>
         </nav>
       </header>
