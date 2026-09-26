@@ -26,7 +26,10 @@ export default function SummaryTab({ availableYears = [] }) {
     const month = i + 1;
     const inc = data.income.find((r) => parseInt(r.month) === month);
     const exps = data.expenses.filter((r) => parseInt(r.month) === month);
-    const totalExpenses = exps.reduce((sum, e) => sum + parseFloat(e.total || 0), 0);
+    const totalExpenses = exps.reduce((sum, e) => {
+      const amt = parseFloat(e.total || 0);
+      return sum + (e.category === 'meals' ? amt * 0.5 : amt);
+    }, 0);
     const collected = parseFloat(inc?.total_collected || 0);
     return {
       name: MONTHS[i],

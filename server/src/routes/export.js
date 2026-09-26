@@ -107,7 +107,8 @@ router.get('/', async (req, res) => {
     } else {
       amount = expenseTotals[key] || 0;
     }
-    addSummaryRow(label, line, amount);
+    if (key === 'meals') amount = amount * 0.5;
+    addSummaryRow(key === 'meals' ? `${label} (50% deductible)` : label, line, amount);
     totalExpenses += amount;
   }
 
