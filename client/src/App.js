@@ -67,12 +67,15 @@ function App() {
               <div style={{ background: '#fff', borderRadius: 10, padding: '24px 32px', minWidth: 220, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}
                 onClick={e => e.stopPropagation()}>
                 <h3 style={{ margin: '0 0 16px', fontSize: 16, color: '#111' }}>Export Year</h3>
-                {availableYears.map(y => (
-                  <button key={y} style={{ display: 'block', width: '100%', marginBottom: 8, fontSize: 15 }}
-                    onClick={() => { exportToExcel(y); setShowExportMenu(false); }}>
-                    {y}
-                  </button>
-                ))}
+                {availableYears.length === 0
+                  ? <p style={{ color: '#999', fontSize: 14, margin: '0 0 12px' }}>No data to export yet.</p>
+                  : availableYears.map(y => (
+                    <button key={y} style={{ display: 'block', width: '100%', marginBottom: 8, fontSize: 15, color: '#111', background: '#f5f5f5', border: '1px solid #ddd' }}
+                      onClick={() => { exportToExcel(y); setShowExportMenu(false); }}>
+                      {y}
+                    </button>
+                  ))
+                }
                 <button style={{ display: 'block', width: '100%', marginTop: 4, fontSize: 14, background: 'none', color: '#999', border: '1px solid #ddd' }}
                   onClick={() => setShowExportMenu(false)}>Cancel</button>
               </div>
