@@ -60,7 +60,10 @@ function App() {
               {tab}
             </button>
           ))}
-          <button onClick={() => setShowExportMenu(true)}>Export</button>
+          <button onClick={() => {
+            setShowExportMenu(true);
+            getYears().then((r) => setAvailableYears(r.data)).catch(() => {});
+          }}>Export</button>
           {showExportMenu && (
             <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               onClick={() => setShowExportMenu(false)}>
