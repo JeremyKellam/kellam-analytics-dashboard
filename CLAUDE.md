@@ -1,6 +1,11 @@
 # Kellam Analytics Dashboard
 
-Freelance analytics consulting business management app.
+Business management app for Kellam Analytics LLC (engineering/analytics contracting).
+
+## URLs
+- Frontend: https://kellam-analytics-dashboard.vercel.app
+- Backend: https://kellam-analytics-dashboard.onrender.com
+- GitHub: https://github.com/JeremyKellam/kellam-analytics-dashboard
 
 ## Stack
 React (Vercel) + Node/Express (Render) + PostgreSQL (Supabase) + Supabase Storage (invoices/receipts)
@@ -8,13 +13,18 @@ React (Vercel) + Node/Express (Render) + PostgreSQL (Supabase) + Supabase Storag
 ## Auth
 Shared API key. Server checks `Authorization: Bearer <key>` on all routes except `/api/health`. Key is `API_KEY` env var on Render. Frontend stores key in localStorage, sends as Bearer token; on 401 clears localStorage and reloads.
 
+## Hosting & Keep-Alive
+- Render free tier spins down after 15 min inactivity. Cold start ~30-60s.
+- Same keep-alive setup as property dashboard may be needed.
+
 ## Environment Variables (Render)
 - `DATABASE_URL` — Supabase pooler URL (port 6543, with `?pgbouncer=true`)
 - `API_KEY` — shared auth key
-- `SUPABASE_URL` — e.g. `https://xxx.supabase.co`
+- `SUPABASE_URL` — Supabase project URL
 - `SUPABASE_SERVICE_KEY` — service_role secret (for storage)
-- `ANTHROPIC_API_KEY` — for Claude invoice parsing
+- `ANTHROPIC_API_KEY` — for Claude invoice parsing (claude-sonnet-4-6)
 - `NODE_ENV` — `production`
+- `NODE_OPTIONS` — `--dns-result-order=ipv4first` (required for Render→Supabase IPv4)
 
 ## Database Schema
 - `invoices` — id, client, invoice_number, invoice_date, due_date, amount, paid (boolean), receipt_path, created_at, updated_at
