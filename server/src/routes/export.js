@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
   const params = yearFilter ? [yearFilter] : [];
 
   const [invoices, expenses, trips] = await Promise.all([
-    pool.query(`SELECT client, invoice_number, invoice_date, due_date, amount, paid FROM invoices ${invoiceWhere} ORDER BY invoice_date`, params),
+    pool.query(`SELECT client, invoice_number, invoice_date, amount, paid FROM invoices ${invoiceWhere} ORDER BY invoice_date`, params),
     pool.query(`SELECT expense_date, category, description, amount FROM expenses ${expenseWhere} ORDER BY expense_date`, params),
     pool.query(`SELECT trip_date, miles, purpose FROM trips ${tripWhere} ORDER BY trip_date`, params),
   ]);
@@ -129,7 +129,6 @@ router.get('/', async (req, res) => {
     { header: 'Client',         key: 'client',         width: 24 },
     { header: 'Invoice #',      key: 'invoice_number', width: 16 },
     { header: 'Invoice Date',   key: 'invoice_date',   width: 14 },
-    { header: 'Due Date',       key: 'due_date',       width: 14 },
     { header: 'Amount',         key: 'amount',         width: 14 },
     { header: 'Paid',           key: 'paid',           width: 8  },
   ];
@@ -137,7 +136,6 @@ router.get('/', async (req, res) => {
   invoices.rows.forEach(row => incomeSheet.addRow({
     ...row,
     invoice_date: row.invoice_date ? new Date(row.invoice_date).toLocaleDateString() : '',
-    due_date: row.due_date ? new Date(row.due_date).toLocaleDateString() : '',
     paid: row.paid ? 'Yes' : 'No',
   }));
 

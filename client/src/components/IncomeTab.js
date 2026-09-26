@@ -7,7 +7,7 @@ export default function IncomeTab({ availableYears = [] }) {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [invoices, setInvoices] = useState([]);
-  const [form, setForm] = useState({ client: '', invoice_number: '', invoice_date: '', due_date: '', amount: '' });
+  const [form, setForm] = useState({ client: '', invoice_number: '', invoice_date: '', amount: '' });
   const [editForm, setEditForm] = useState(null);
   const [parsing, setParsing] = useState(false);
   const [parseResult, setParseResult] = useState(null);
@@ -35,7 +35,6 @@ export default function IncomeTab({ availableYears = [] }) {
         client: res.data.client || '',
         invoice_number: res.data.invoice_number || '',
         invoice_date: res.data.invoice_date || '',
-        due_date: res.data.due_date || '',
         amount: res.data.amount || '',
       });
     } catch (err) {
@@ -50,7 +49,7 @@ export default function IncomeTab({ availableYears = [] }) {
     e.preventDefault();
     await createInvoice(form);
     load();
-    setForm({ client: '', invoice_number: '', invoice_date: '', due_date: '', amount: '' });
+    setForm({ client: '', invoice_number: '', invoice_date: '', amount: '' });
     setParseResult(null);
   };
 
@@ -60,7 +59,6 @@ export default function IncomeTab({ availableYears = [] }) {
       client: editForm.client,
       invoice_number: editForm.invoice_number,
       invoice_date: editForm.invoice_date,
-      due_date: editForm.due_date,
       amount: editForm.amount,
     });
     load();
@@ -146,10 +144,6 @@ export default function IncomeTab({ availableYears = [] }) {
               onChange={(e) => setForm({ ...form, invoice_date: e.target.value })}
               required />
           </label>
-          <label>Due Date
-            <input type="date" value={form.due_date}
-              onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
-          </label>
           <label>Amount
             <input type="number" step="0.01" value={form.amount}
               onChange={(e) => setForm({ ...form, amount: e.target.value })}
@@ -176,7 +170,6 @@ export default function IncomeTab({ availableYears = [] }) {
                 <th>Invoice #</th>
                 <th>Client</th>
                 <th>Date</th>
-                <th>Due Date</th>
                 <th>Amount</th>
                 <th>Status</th>
                 <th></th>
@@ -189,7 +182,6 @@ export default function IncomeTab({ availableYears = [] }) {
                     <td>{inv.invoice_number || '—'}</td>
                     <td>{inv.client}</td>
                     <td>{new Date(inv.invoice_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</td>
-                    <td>{inv.due_date ? new Date(inv.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '—'}</td>
                     <td>{fmt(inv.amount)}</td>
                     <td><span className={`badge ${inv.paid ? 'paid' : 'unpaid'}`}>{inv.paid ? 'Paid' : 'Unpaid'}</span></td>
                     <td style={{ display: 'flex', gap: 6 }}>
@@ -204,7 +196,6 @@ export default function IncomeTab({ availableYears = [] }) {
                         client: inv.client,
                         invoice_number: inv.invoice_number || '',
                         invoice_date: inv.invoice_date ? inv.invoice_date.slice(0, 10) : '',
-                        due_date: inv.due_date ? inv.due_date.slice(0, 10) : '',
                         amount: inv.amount,
                       })}>Edit</button>
                       <button className="danger" onClick={() => handleDelete(inv.id)}>Delete</button>
@@ -212,7 +203,7 @@ export default function IncomeTab({ availableYears = [] }) {
                   </tr>
                   {editForm && editForm.id === inv.id && (
                     <tr>
-                      <td colSpan={7} style={{ background: '#fafafa', padding: '8px 24px' }}>
+                      <td colSpan={6} style={{ background: '#fafafa', padding: '8px 24px' }}>
                         <form onSubmit={handleEdit} style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
                           <label>Client
                             <input type="text" value={editForm.client}
@@ -227,10 +218,6 @@ export default function IncomeTab({ availableYears = [] }) {
                             <input type="date" value={editForm.invoice_date}
                               onChange={(e) => setEditForm({ ...editForm, invoice_date: e.target.value })}
                               required />
-                          </label>
-                          <label>Due Date
-                            <input type="date" value={editForm.due_date}
-                              onChange={(e) => setEditForm({ ...editForm, due_date: e.target.value })} />
                           </label>
                           <label>Amount
                             <input type="number" step="0.01" value={editForm.amount}
