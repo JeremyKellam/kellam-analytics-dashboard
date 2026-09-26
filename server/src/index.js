@@ -26,14 +26,19 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/years', async (req, res) => {
-  const result = await db.query(`
-    SELECT DISTINCT year FROM (
-      SELECT EXTRACT(YEAR FROM invoice_date)::int AS year FROM invoices
-      UNION SELECT year FROM expenses
-      UNION SELECT EXTRACT(YEAR FROM trip_date)::int AS year FROM trips
-    ) y ORDER BY year DESC
-  `);
-  res.json(result.rows.map(r => r.year));
+  try {
+    const result = await db.query(`
+      SELECT DISTINCT year FROM (
+        SELECT EXTRACT(YEAR FROM invoice_date)::int AS year FROM invoices
+        UNION SELECT year FROM expenses
+        UNION SELECT EXTRACT(YEAR FROM trip_date)::int AS year FROM trips
+      ) y ORDER BY year DESC
+    `);
+    res.json(result.rows.map(r => r.year));
+  } catch (err) {
+    console.error('Error in /api/years:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.use('/api/invoices', require('./routes/invoices'));

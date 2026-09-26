@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     if (apiKey) {
-      getYears().then((r) => setAvailableYears(r.data)).catch(() => {});
+      getYears().then((r) => setAvailableYears(r.data)).catch((err) => console.error('getYears failed:', err));
     }
   }, [apiKey]);
 
@@ -62,7 +62,7 @@ function App() {
           ))}
           <button onClick={() => {
             setShowExportMenu(true);
-            getYears().then((r) => setAvailableYears(r.data)).catch(() => {});
+            getYears().then((r) => setAvailableYears(r.data)).catch((err) => console.error('getYears failed:', err));
           }}>Export</button>
           {showExportMenu && (
             <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
