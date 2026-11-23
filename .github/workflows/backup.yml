@@ -8,6 +8,8 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     steps:
       - name: Dump database
         run: |
@@ -22,3 +24,7 @@ jobs:
           name: kellam-analytics-backup-${{ github.run_started_at }}
           path: backup.sql.gz
           retention-days: 90
+
+      - name: Keep workflow enabled
+        if: always()
+        uses: gautamkrishnar/keepalive-workflow@v2
